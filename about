@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - EcoShine Cleaning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">EcoShine</div>
+            <ul class="nav-links">
+                <li><a href="index.html" data-page="home">Home</a></li>
+                <li><a href="about.html" class="active" data-page="about">About Us</a></li>
+                <li><a href="contact.html" data-page="contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-hero">
+            <h1>Our Story</h1>
+            <p class="subtitle">Where passion meets purpose in every clean</p>
+        </section>
+
+        <section class="about-content">
+            <div class="content-block">
+                <div class="content-image">
+                    <div class="placeholder-about"></div>
+                </div>
+                <div class="content-text">
+                    <h2>Built on Trust & Nature</h2>
+                    <p>Founded by Alicia with a simple belief: your home deserves care that's both effective and earth-friendly. What started as a passion for creating healthier living spaces has grown into a trusted cleaning service that families across the community rely on.</p>
+                    <p>We believe that a truly clean home shouldn't come at the expense of your health or our planet. That's why we've committed to using only natural, non-toxic cleaning solutions that deliver professional results without harsh chemicals.</p>
+                </div>
+            </div>
+
+            <div class="values-section">
+                <h2>Our Values</h2>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon">🌍</div>
+                        <h3>Environmental Care</h3>
+                        <p>Every product we use is biodegradable, sustainably sourced, and safe for waterways and wildlife.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">💚</div>
+                        <h3>Family First</h3>
+                        <p>We treat every home as if it were our own, with respect, care, and attention to what matters most to you.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">⭐</div>
+                        <h3>Excellence</h3>
+                        <p>Professional training, quality tools, and genuine pride in our work ensure consistently outstanding results.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-section">
+                <h2>Meet Our Founder</h2>
+                <div class="founder-card">
+                    <div class="founder-image">
+                        <div class="placeholder-founder"></div>
+                    </div>
+                    <div class="founder-info">
+                        <h3>Alicia</h3>
+                        <p class="founder-title">Owner & Founder</p>
+                        <p class="founder-bio">With over a decade of experience in the cleaning industry and a lifelong commitment to environmental sustainability, Alicia founded EcoShine to prove that professional cleaning and eco-consciousness can go hand in hand. Her attention to detail and genuine care for each client has built EcoShine's reputation as a trusted name in natural home care.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 EcoShine Cleaning. All rights reserved. Bringing nature's touch to every home.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
