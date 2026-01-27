@@ -923,5 +923,22 @@ footer {
 }
 
     <script src="script.js"></script>
-</body>
-</html>
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+}
