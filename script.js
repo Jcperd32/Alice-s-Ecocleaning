@@ -69,12 +69,15 @@ navItems.forEach(item => {
 // ============================================
 // CONTACT FORM HANDLING
 // ============================================
+// ============================================
+// CONTACT FORM HANDLING - WORKING VERSION
+// ============================================
 
 const contactForm = document.getElementById('contact-form');
 const formMessage = document.getElementById('form-message');
 
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Get form data
@@ -98,25 +101,34 @@ if (contactForm) {
         submitButton.textContent = 'Sending...';
         submitButton.disabled = true;
         
-        // Simulate form submission (replace with actual form handling)
-        setTimeout(() => {
-            // Success message
-            showFormMessage('Thank you! We\'ll get back to you within 24 hours.', 'success');
+        try {
+            // ACTUAL FORM SUBMISSION to FormSubmit
+            const formElement = contactForm;
+            const formDataToSend = new FormData(formElement);
             
-            // Reset form
-            contactForm.reset();
+            const response = await fetch(formElement.action, {
+                method: 'POST',
+                body: formDataToSend,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
             
+            if (response.ok) {
+                showFormMessage('Thank you! We\'ll get back to you within 24 hours.', 'success');
+                contactForm.reset();
+            } else {
+                const errorData = await response.json();
+                showFormMessage(errorData.message || 'Something went wrong. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            showFormMessage('Network error. Please check your connection and try again.', 'error');
+        } finally {
             // Reset button
             submitButton.textContent = originalButtonText;
             submitButton.disabled = false;
-            
-            // Log form data (in production, send to server)
-            console.log('Form submitted:', formData);
-            
-            // Optional: Send email via service like EmailJS, Formspree, or your backend
-            // handleFormSubmission(formData);
-            
-        }, 1500);
+        }
     });
 }
 
@@ -134,7 +146,7 @@ function validateForm(data) {
     
     // Validate phone format (basic check)
     const phoneRegex = /^[\d\s\-\(\)]+$/;
-    if (!phoneRegex.test(data.phone) || data.phone.length < 10) {
+    if (!phoneRegex.test(data.phone) || data.phone.replace(/\D/g, '').length < 10) {
         return false;
     }
     
@@ -147,37 +159,28 @@ function showFormMessage(message, type) {
         formMessage.className = `form-message ${type}`;
         formMessage.style.display = 'block';
         
-        // Hide message after 5 seconds for success, keep for errors
+        // Style the message
+        formMessage.style.padding = '12px';
+        formMessage.style.borderRadius = '8px';
+        formMessage.style.marginTop = '15px';
+        formMessage.style.fontWeight = '500';
+        
         if (type === 'success') {
+            formMessage.style.backgroundColor = '#d4edda';
+            formMessage.style.color = '#155724';
+            formMessage.style.border = '1px solid #c3e6cb';
+            
+            // Hide message after 5 seconds
             setTimeout(() => {
                 formMessage.style.display = 'none';
             }, 5000);
+        } else {
+            formMessage.style.backgroundColor = '#f8d7da';
+            formMessage.style.color = '#721c24';
+            formMessage.style.border = '1px solid #f5c6cb';
         }
     }
 }
-
-// Optional: Actual form submission to email service
-function handleFormSubmission(formData) {
-    // Example using fetch to send to your backend or email service
-    /*
-    fetch('YOUR_BACKEND_URL/contact', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        showFormMessage('Something went wrong. Please try again.', 'error');
-    });
-    */
-}
-
 
 // ============================================
 // FEATURE CARDS ANIMATION ON SCROLL
