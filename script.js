@@ -66,9 +66,7 @@ navItems.forEach(item => {
 });
 
 
-// ============================================
-// CONTACT FORM HANDLING
-// ============================================
+
 // ============================================
 // CONTACT FORM HANDLING - WORKING VERSION
 // ============================================
@@ -384,3 +382,37 @@ window.addEventListener('scroll', function() {
 
 console.log('%cAlice-s Eco House Cleaning Website', 'color: #7a9063; font-size: 20px; font-weight: bold;');
 console.log('%cBuilt with care for the environment 🌿', 'color: #5a6f4a; font-size: 14px;');
+
+
+// ============================================
+// FEATURED WORK GALLERY SCROLL REVEAL
+// ============================================
+
+function initGalleryScrollReveal() {
+    const galleryCards = document.querySelectorAll('.gallery-card');
+    
+    if (galleryCards.length === 0) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -30px 0px'
+    });
+    
+    galleryCards.forEach(card => {
+        observer.observe(card);
+    });
+}
+
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGalleryScrollReveal);
+} else {
+    initGalleryScrollReveal();
+}
