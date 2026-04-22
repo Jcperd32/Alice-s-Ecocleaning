@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Vertigo Collage | Premium Loading Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', sans-serif;
+            background: #f5f3ea;  /* soft cream base */
+        }
+
+        /* LOADING OVERLAY - soft light green / olive cream palette */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, #eef2e0, #dce5ce);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0s linear 1.2s;
+            backdrop-filter: blur(0px);
+        }
+
+        /* subtle organic texture */
+        .loading-overlay::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(#c3d0a5 0.7px, transparent 0.7px);
+            background-size: 32px 32px;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* MAIN COLLAGE CONTAINER */
+        .collage-stage {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 20px 30px rgba(60, 50, 30, 0.15));
+        }
+
+        /* rotating image wrapper */
+        .rotating-stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 0.98, 0.32, 1);
+        }
+
+        .collage-card {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            top: 50%;
+            left: 50%;
+            margin-left: -140px;
+            margin-top: -140px;
+            background: rgba(250, 248, 238, 0.75);
+            backdrop-filter: blur(3px);
+            border-radius: 28px;
+            box-shadow: 0 25px 40px -12px rgba(40, 35, 20, 0.25), 0 0 0 1px rgba(220, 210, 180, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: scale(0.92) translateY(15px);
+            pointer-events: none;
+        }
+
+        .collage-card.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            box-shadow: 0 30px 45px -12px rgba(50, 45, 25, 0.3);
+        }
+
+        .collage-card img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+            transition: all 0.3s;
+        }
+
+        /* logo special style (final stage) */
+        .collage-card.logo-card {
+            background: linear-gradient(135deg, #fefcf3, #f6f2e4);
+            border: 1px solid #e2d8bd;
+        }
+
+        .collage-card.logo-card img {
+            max-width: 78%;
+            filter: drop-shadow(0 8px 12px rgba(100, 85, 50, 0.15));
+        }
+
+        /* elegant progress text & counter */
+        .progress-meta {
+            position: absolute;
+            bottom: -70px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 460;
+            letter-spacing: 0.3px;
+            background: rgba(245, 242, 230, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            width: fit-content;
+            margin: 0 auto;
+            border: 0.5px solid #d9d0b5;
+            color: #6b7452;
+            font-size: 0.9rem;
+        }
+
+        .progress-meta span {
+            font-weight: 600;
+            color: #7c8a5c;
+            margin: 0 2px;
+        }
+
+        .brand-watermark {
+            position: absolute;
+            bottom: 28px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b9b696;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+        }
+
+        /* EXPANDING TRANSITION — after logo appears, we expand and reveal page */
+        .expand-transition {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            background: #e7e9d8;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 2001;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            box-shadow: 0 0 0 0 rgba(180, 190, 140, 0);
+        }
+
+        /* hidden main content (your actual page would be here) */
+        .main-site {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fffef7;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease 0.2s;
+            overflow: auto;
+        }
+
+        .demo-welcome {
+            text-align: center;
+            max-width: 550px;
+            padding: 2.5rem;
+            background: rgba(255, 253, 245, 0.9);
+            border-radius: 48px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.05);
+            border: 1px solid #ece3cf;
+        }
+
+        .demo-welcome h1 {
+            font-weight: 500;
+            color: #6b7752;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+        }
+
+        .demo-welcome p {
+            color: #939b77;
+            line-height: 1.6;
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 550px) {
+            .collage-stage {
+                width: 300px;
+                height: 300px;
+            }
+            .collage-card {
+                width: 230px;
+                height: 230px;
+                margin-left: -115px;
+                margin-top: -115px;
+            }
+            .progress-meta {
+                bottom: -55px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOADING COLLAGE OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="collage-stage">
+        <div class="rotating-stack" id="rotatingStack">
+            <!-- dynamic cards will be injected via JS, but we build static base -->
+        </div>
+        <div class="progress-meta" id="progressMeta">
+            <span id="currentStep">0</span> / <span id="totalSteps">10</span> · visual journey
+        </div>
+    </div>
+    <div class="brand-watermark"></div>
+</div>
+
+<!-- expansion effect node -->
+<div class="expand-transition" id="expandEffect"></div>
+
+<!-- transition code -->
+    
+<div class="main-site" id="mainSite">
+    <iframe src="index.html" style="width: 100%; height: 100%; border: none; background: #fffef7;"></iframe>
+</div>
+    
+<script>
+    (function() {
+        // ------------------------------------------------------------------
+        // PROFESSIONAL VERTICAL ROTATING COLLAGE
+        // images: reference/img1.png to img10.png (1..10)
+        // last image (index 10) is our LOGO, then expand to main page
+        // vertical rotation effect: each image appears in a 3D stack-like flip
+        // but we want a clean "rotating vertically" meaning a carousel that rotates
+        // vertically (top to bottom feel) — we'll achieve a morphing vertical flip effect
+        // using CSS transitions combined with active index change.
+        // For smoothness, we'll cycle through images 1 to 10, each shown for 400ms,
+        // then pause at 10 (logo) and then trigger expansion.
+        // ------------------------------------------------------------------
+        
+        const TOTAL_IMAGES = 10;      // img1.png ... img10.png (logo)
+        const DURATION_PER_IMAGE = 380; // ms per image (smooth but not too fast)
+        const HOLD_LOGO_EXTRA = 600;    // extra hold on logo before expansion
+        
+        let currentIndex = 1;           // start at image 1
+        let intervalId = null;
+        let isExpanding = false;
+        let expansionTriggered = false;
+        
+        // Get DOM elements
+        const overlay = document.getElementById('loadingOverlay');
+        const stackContainer = document.getElementById('rotatingStack');
+        const currentStepSpan = document.getElementById('currentStep');
+        const totalStepsSpan = document.getElementById('totalSteps');
+        const expandEffectDiv = document.getElementById('expandEffect');
+        const mainSiteDiv = document.getElementById('mainSite');
+        
+        if(totalStepsSpan) totalStepsSpan.innerText = TOTAL_IMAGES;
+        
+        // preload all images for flawless performance
+        const preloadedImages = [];
+        function preloadImage(src, idx) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => {
+                    // fallback: create a colored canvas with number if image missing
+                    console.warn(`Could not load ${src}, using fallback`);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 300;
+                    canvas.height = 300;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ece6d8';
+                    ctx.fillRect(0,0,300,300);
+                    ctx.fillStyle = '#8c9a6e';
+                    ctx.font = 'bold 32px "Segoe UI"';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${idx}`, 150, 150);
+                    const fallbackImg = new Image();
+                    fallbackImg.src = canvas.toDataURL();
+                    resolve(fallbackImg);
+                };
+                img.src = src;
+            });
+        }
+        
+        // create card elements dynamically (10 cards)
+        async function buildCollageCards() {
+            const promises = [];
+            for(let i = 1; i <= TOTAL_IMAGES; i++) {
+                const imgPath = `reference/img${i}.png`;  // exactly as requested
+                promises.push(preloadImage(imgPath, i));
+            }
+            const loadedImages = await Promise.all(promises);
+            
+            // clear container
+            stackContainer.innerHTML = '';
+            // create cards for each image
+            for(let i = 0; i < TOTAL_IMAGES; i++) {
+                const card = document.createElement('div');
+                const isLogo = (i+1 === TOTAL_IMAGES);
+                card.className = `collage-card ${isLogo ? 'logo-card' : ''}`;
+                card.setAttribute('data-index', i+1);
+                const imgElement = document.createElement('img');
+                imgElement.src = loadedImages[i].src;
+                imgElement.alt = `tool ${i+1}`;
+                // optional: for logo we add subtle extra style
+                if(isLogo) {
+                    imgElement.style.transition = "transform 0.3s";
+                }
+                card.appendChild(imgElement);
+                stackContainer.appendChild(card);
+            }
+            // initially show first card
+            updateActiveCard(1);
+        }
+        
+        // update active card based on index (1..10)
+        function updateActiveCard(index) {
+            const cards = document.querySelectorAll('.collage-card');
+            cards.forEach((card, idx) => {
+                const cardNum = idx + 1;
+                if(cardNum === index) {
+                    card.classList.add('active');
+                    // add subtle vertical rotation animation? we simulate vertical flip by transformY keyframes
+                    // we apply a micro entrance effect per card
+                    card.style.animation = 'none';
+                    card.offsetHeight; // reflow
+                    card.style.animation = 'verticalPop 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards';
+                } else {
+                    card.classList.remove('active');
+                    card.style.animation = '';
+                }
+            });
+            // update counter display
+            if(currentStepSpan) currentStepSpan.innerText = index;
+        }
+        
+        // add keyframe animation for vertical "rotate" feel
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes verticalPop {
+                0% {
+                    opacity: 0;
+                    transform: rotateX(25deg) translateY(18px) scale(0.92);
+                    filter: blur(2px);
+                }
+                40% {
+                    opacity: 0.8;
+                    transform: rotateX(-4deg) translateY(-2px) scale(1.01);
+                }
+                100% {
+                    opacity: 1;
+                    transform: rotateX(0deg) translateY(0) scale(1);
+                    filter: blur(0);
+                }
+            }
+            .collage-card {
+                transition: box-shadow 0.3s, transform 0.2s;
+            }
+            .collage-card.active:hover {
+                transform: scale(1.02);
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        
+        // rotate to next image (vertical cycle)
+        function nextImage() {
+            if (isExpanding || expansionTriggered) return;
+            
+            if (currentIndex < TOTAL_IMAGES) {
+                currentIndex++;
+                updateActiveCard(currentIndex);
+                
+                // when we reach the last image (logo), we schedule expansion
+                if (currentIndex === TOTAL_IMAGES) {
+                    // reached logo: clear the auto-rotation interval
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                    // hold logo for a moment then expand
+                    setTimeout(() => {
+                        if (!expansionTriggered && !isExpanding) {
+                            triggerExpansion();
+                        }
+                    }, HOLD_LOGO_EXTRA);
+                }
+            } else {
+                // safety: if somehow already at logo, trigger expansion
+                if (!expansionTriggered && currentIndex === TOTAL_IMAGES) {
+                    setTimeout(() => {
+                        if (!expansionTriggered) triggerExpansion();
+                    }, 200);
+                }
+            }
+        }
+        
+        // start the rotating sequence
+        function startRotation() {
+            if (intervalId) clearInterval(intervalId);
+            currentIndex = 1;
+            updateActiveCard(1);
+            intervalId = setInterval(() => {
+                nextImage();
+            }, DURATION_PER_IMAGE);
+        }
+        
+        // PROFESSIONAL EXPANSION: after logo is displayed, the collage morphs & expands
+        // creating a beautiful opening effect, then reveals the main page.
+        function triggerExpansion() {
+            if (expansionTriggered || isExpanding) return;
+            expansionTriggered = true;
+            isExpanding = true;
+            
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            
+            // get the current active card (logo card)
+            const activeCard = document.querySelector('.collage-card.active');
+            const collageStage = document.querySelector('.collage-stage');
+            const overlayElem = document.getElementById('loadingOverlay');
+            const progressMetaDiv = document.querySelector('.progress-meta');
+            const watermarkDiv = document.querySelector('.brand-watermark');
+            
+            // make sure logo card looks prominent
+            if (activeCard) {
+                activeCard.style.transition = 'all 0.5s cubic-bezier(0.2, 0.95, 0.3, 1.1)';
+                activeCard.style.boxShadow = '0 35px 55px -12px rgba(60, 55, 30, 0.4)';
+            }
+            
+            // prepare expansion effect: we will animate the expand-transition div from the logo position
+            // get bounding rect of the active card relative to viewport
+            if (activeCard) {
+                const rect = activeCard.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                expandEffectDiv.style.left = `${centerX}px`;
+                expandEffectDiv.style.top = `${centerY}px`;
+                expandEffectDiv.style.width = `${rect.width}px`;
+                expandEffectDiv.style.height = `${rect.height}px`;
+                expandEffectDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+                expandEffectDiv.style.opacity = '1';
+                expandEffectDiv.style.background = '#e2e6d3';
+                expandEffectDiv.style.boxShadow = '0 0 0 0px rgba(150, 160, 110, 0.3)';
+                
+                // force reflow
+                expandEffectDiv.offsetHeight;
+                // animate expansion: grow to full screen
+                expandEffectDiv.style.transition = 'all 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+                expandEffectDiv.style.width = '200vw';
+                expandEffectDiv.style.height = '200vh';
+                expandEffectDiv.style.left = '50%';
+                expandEffectDiv.style.top = '50%';
+                expandEffectDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+                expandEffectDiv.style.backgroundColor = '#eef1e0';
+                expandEffectDiv.style.opacity = '0.95';
+                expandEffectDiv.style.borderRadius = '0%';
+            }
+            
+            // fade out the progress meta and watermark for elegance
+            if (progressMetaDiv) progressMetaDiv.style.transition = 'opacity 0.4s';
+            if (progressMetaDiv) progressMetaDiv.style.opacity = '0';
+            if (watermarkDiv) watermarkDiv.style.transition = 'opacity 0.4s';
+            if (watermarkDiv) watermarkDiv.style.opacity = '0';
+            
+            // fade out loading overlay background slightly after expansion start
+            if (overlayElem) {
+                overlayElem.style.transition = 'opacity 0.7s ease';
+                overlayElem.style.opacity = '0';
+            }
+            
+            // after expansion animation ends, reveal main site and fully remove loading overlay
+            setTimeout(() => {
+                // reveal main site content
+                if (mainSiteDiv) {
+                    mainSiteDiv.style.visibility = 'visible';
+                    mainSiteDiv.style.opacity = '1';
+                }
+                // completely hide loading overlay and expansion effect
+                if (overlayElem) {
+                    overlayElem.style.display = 'none';
+                }
+                expandEffectDiv.style.opacity = '0';
+                expandEffectDiv.style.visibility = 'hidden';
+                
+                // optional: trigger callback if needed
+                isExpanding = false;
+            }, 850);
+        }
+        
+        // fallback mechanism: if any image fails to load we still show sequence
+        // Also we ensure that the rotating collage begins after cards built.
+        async function initAnimation() {
+            await buildCollageCards();
+            startRotation();
+            
+            // also handle edge case: if for some reason images take too long, we force start after max 1s
+            setTimeout(() => {
+                if (!intervalId && !expansionTriggered) {
+                    console.log("forcing rotation start");
+                    startRotation();
+                }
+            }, 1200);
+        }
+        
+        // ensure that we don't have blank screen: immediately show first card
+        initAnimation().catch(err => {
+            console.warn("error building cards, using fallback", err);
+            // fallback: create placeholder cards
+            const fallbackGenerate = async () => {
+                stackContainer.innerHTML = '';
+                for(let i=1; i<=TOTAL_IMAGES; i++) {
+                    const card = document.createElement('div');
+                    card.className = `collage-card ${i===TOTAL_IMAGES ? 'logo-card' : ''}`;
+                    const img = document.createElement('img');
+                    // use inline placeholder data
+                    img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e8e2cf'/%3E%3Ctext x='50' y='55' font-size='28' text-anchor='middle' fill='%23829464'%3E${i}%3C/text%3E%3C/svg%3E`;
+                    img.alt = `img${i}`;
+                    card.appendChild(img);
+                    stackContainer.appendChild(card);
+                }
+                updateActiveCard(1);
+                startRotation();
+            };
+            fallbackGenerate();
+        });
+        
+        // Additional polish: if user clicks on logo? no interaction needed, fully automatic
+        // But we also allow that if somehow expansion didn't trigger (just in case), we trigger after 6s max
+        setTimeout(() => {
+            if (!expansionTriggered && currentIndex === TOTAL_IMAGES) {
+                triggerExpansion();
+            } else if (!expansionTriggered && currentIndex < TOTAL_IMAGES) {
+                // force after 7.5 seconds just in case rotation gets stuck (robustness)
+                setTimeout(() => {
+                    if (!expansionTriggered) {
+                        if (currentIndex < TOTAL_IMAGES) {
+                            // jump to logo
+                            currentIndex = TOTAL_IMAGES;
+                            updateActiveCard(TOTAL_IMAGES);
+                            if (intervalId) clearInterval(intervalId);
+                            setTimeout(() => triggerExpansion(), 500);
+                        } else {
+                            triggerExpansion();
+                        }
+                    }
+                }, 2500);
+            }
+        }, 7000);
+        
+        // final cleanup: ensure no memory leaks
+        window.addEventListener('beforeunload', () => {
+            if(intervalId) clearInterval(intervalId);
+        });
+    })();
+</script>
+</body>
+</html>
