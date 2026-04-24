@@ -144,6 +144,13 @@ nav {
     animation: fadeInUp 1s ease-out;
 }
 
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This ensures the image covers the area nicely */
+    display: block;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
