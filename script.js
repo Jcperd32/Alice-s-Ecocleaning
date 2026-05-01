@@ -380,8 +380,8 @@ window.addEventListener('scroll', function() {
 // CONSOLE MESSAGE FOR DEVELOPERS
 // ============================================
 
-console.log('%cAlice-s Eco House Cleaning Website', 'color: #7a9063; font-size: 20px; font-weight: bold;');
-console.log('%cBuilt with care for the environment 🌿', 'color: #5a6f4a; font-size: 14px;');
+console.log('%cAlicia-s Home Care', 'color: #7a9063; font-size: 20px; font-weight: bold;');
+console.log('%cProfessional home care across the Hamptons', 'color: #5a6f4a; font-size: 14px;');
 
 
 // ============================================
