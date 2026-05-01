@@ -416,3 +416,7 @@ if (document.readyState === 'loading') {
 } else {
     initGalleryScrollReveal();
 }
+
+function returnToHome() {
+    window.location.reload();
+}
